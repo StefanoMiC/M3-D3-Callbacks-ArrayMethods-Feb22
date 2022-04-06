@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+
+    <title>Strive books</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="display-4">Strive Books</h1>
+        <input type="text" id="searchQuery" class="form-control mb-3" onchange="handleSearchQuery(event)" />
+        <div class="row"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const handleSearchQuery = (event) => {
+
+            const searchQuery = event.target.value // string of input value 
+            fetch("https://striveschool-api.herokuapp.com/books", { method: "GET" })
+                .then(response => response.json()) // parsing the body from ReadableStream to a usable format (Promise)
+                .then(books => {
+                    // ONLY HERE YOU CAN BE SURE TO BE SYNCHRONIZED TO WHEN YOU HAVE TO DATA
+                    // AND DO YOUR DOM MANIPULATION SAFELY IN THIS CONTEXT KNOWING IT'S GOING TO HAPPEN AT THE RIGHT TIME
+                    console.log(books)
+
+                    const row = document.querySelector(".row")
+
+                    row.innerHTML =
+                        books
+                            .filter(book => book.title.toLowerCase().includes(searchQuery.toLowerCase())) // both book.title and searchQuery get compared in their lowercase version
+                            .map(book => `
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                            <img src=${book.img} class="card-img-top" alt="...">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">${book.title}</h5>
+                                                                <p class="card-text">€ ${book.price}</p>
+                                                                <a href="#" class="btn btn-primary">${book.category}</a>
+                                                            </div>
+                                                    </div>
+                                                </div>`).join("")
+                })
+                .catch(err => console.log(err))
+
+        }
+
+
+        const loadBooks = () => {
+            fetch("https://striveschool-api.herokuapp.com/books", { method: "GET" })
+                .then(response => response.json()) // parsing the body from ReadableStream to a usable format (Promise)
+                .then(books => {
+                    // ONLY HERE YOU CAN BE SURE TO BE SYNCHRONIZED TO WHEN YOU HAVE TO DATA
+                    // AND DO YOUR DOM MANIPULATION SAFELY IN THIS CONTEXT KNOWING IT'S GOING TO HAPPEN AT THE RIGHT TIME
+                    console.log(books)
+
+                    const row = document.querySelector(".row")
+
+
+                    //MAP METHOD - creates an array of strings and removes the commas with .join("") to become the new innerHTML of row
+                    row.innerHTML =
+                        books
+                            .map(book => `
+                                                <div class="col-sm-3">
+                                                    <div class="card">
+                                                            <img src=${book.img} class="card-img-top" alt="...">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title">${book.title}</h5>
+                                                                <p class="card-text">€ ${book.price}</p>
+                                                                <a href="#" class="btn btn-primary">${book.category}</a>
+                                                            </div>
+                                                    </div>
+                                                </div>`).join("")
+
+
+
+                    //FOREACH EXAMPLE
+                    // const filteredBooks = books.filter(book => book.price < 10)
+                    // filteredBooks.forEach(book => {
+                    //     const col = document.createElement("div")
+                    //     col.classList.add("col-sm-3")
+
+                    //     col.innerHTML = `
+                    //     <div class="card">
+                    //         <img src=${book.img} class="card-img-top" alt="...">
+                    //         <div class="card-body">
+                    //             <h5 class="card-title">${book.title}</h5>
+                    //             <p class="card-text">€ ${book.price}</p>
+                    //             <a href="#" class="btn btn-primary">${book.category}</a>
+                    //         </div>
+                    //     </div>
+                    // `
+                    //     row.appendChild(col)
+                    // })
+
+
+
+                    //OLD VERSION
+                    // for (let i = 0; i < books.length; i++) {
+                    //     const book = books[i];
+                    //     // console.log(book)
+
+                    //     const col = document.createElement("div")
+                    //     col.classList.add("col-sm-3")
+
+                    //     col.innerHTML = `
+                    //     <div class="card">
+                    //         <img src=${book.img} class="card-img-top" alt="...">
+                    //         <div class="card-body">
+                    //             <h5 class="card-title">${book.title}</h5>
+                    //             <p class="card-text">€ ${book.price}</p>
+                    //             <a href="#" class="btn btn-primary">${book.category}</a>
+                    //         </div>
+                    //     </div>
+                    // `
+                    //     row.appendChild(col)
+                    // }
+                })
+                .catch(err => console.log(err))
+        }
+
+        window.onload = () => {
+            loadBooks()
+            console.log("LAST THING")
+        }
+    </script>
+</body>
+
+</html>
